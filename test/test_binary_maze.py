@@ -1,6 +1,6 @@
 import unittest
 
-from src.binary_maze import bfs, Point, queueNode
+from src.binary_maze import bfs, Point, queueVertex
 
 
 class MyTestCase(unittest.TestCase):

@@ -7,7 +7,7 @@ class Point:
         self.y = y
 
 
-class queueNode:
+class queueVertex:
     def __init__(self, point: Point, dist: int):
         self.point = point
         self.dist = dist
@@ -22,7 +22,7 @@ def is_valid(row, col):
 
 
 def bfs(graph, start: Point, final: Point):
-    s = queueNode(start, 0)
+    s = queueVertex(start, 0)
     queue = [s]
     visited = [[False for i in range(COL)]
                for j in range(ROW)]
@@ -44,7 +44,7 @@ def bfs(graph, start: Point, final: Point):
 
             if is_valid(row, column) and graph[row][column] == 1 and not visited[row][column]:
                 visited[row][column] = True
-                adj_cell = queueNode(Point(row, column), current_node.dist + 1)
+                adj_cell = queueVertex(Point(row, column), current_node.dist + 1)
                 queue.append(adj_cell)
     return -1
 
