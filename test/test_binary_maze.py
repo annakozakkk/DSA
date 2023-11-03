@@ -1,6 +1,6 @@
 import unittest
 
-from src.binary_maze import bfs, Point, queueVertex
+from src.binary_maze import bfs, Point, QueueVertex
 
 
 class MyTestCase(unittest.TestCase):
@@ -19,8 +19,7 @@ class MyTestCase(unittest.TestCase):
         start = Point(0, 0)
         final = Point(7, 5)
 
-        ROW = 10
-        COL = 10
+
 
         result = bfs(adjMat, start, final)
 

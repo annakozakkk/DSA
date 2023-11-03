@@ -1,82 +1,74 @@
-file = open("input.txt")
-
-
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
 
-class queueVertex:
+class QueueVertex:
     def __init__(self, point: Point, dist: int):
         self.point = point
         self.dist = dist
 
 
-row_direction = [-1, 0, 0, 1]
-col_direction = [0, -1, 1, 0]
+ROW_DIRECTION = [-1, 0, 0, 1]
+COL_DIRECTION = [0, -1, 1, 0]
+TOTAL_DIRECTIONS = 4
 
 
 def is_valid(row, col):
-    return (row >= 0) and (row < ROW) and (col >= 0) and (col < COL)
+    return (row >= 0) and (row < TOTAL_ROW_COUNT) and (col >= 0) and (col < TOTAL_COLUMN_COUNT)
 
 
-def bfs(graph, start: Point, final: Point):
-    s = queueVertex(start, 0)
-    queue = [s]
-    visited = [[False for i in range(COL)]
-               for j in range(ROW)]
+def bfs(matrix, start: Point, final: Point):
+    source = QueueVertex(start, 0)
+    queue = [source]
+    visited = [[False for i in range(TOTAL_COLUMN_COUNT)]
+               for j in range(TOTAL_ROW_COUNT)]
     visited[start.x][start.y] = True
-    if graph[start.x][start.y] != 1 or graph[final.x][final.y] != 1:
+    if matrix[start.x][start.y] != 1 or matrix[final.x][final.y] != 1:
         return -1
     while queue:
-        current_node = queue.pop(0)
-        point = current_node.point
+        current_point = queue.pop(0)
+        point = current_point.point
 
         if point.x == final.x and point.y == final.y:
-            with open('result.txt', 'w') as file:
-                file.write(str(current_node.dist))
-            return current_node.dist
+            write_result_to_file(current_point.dist)
+            return current_point.dist
 
-        for i in range(4):
-            row = point.x + row_direction[i]
-            column = point.y + col_direction[i]
+        for i in range(TOTAL_DIRECTIONS):
+            row = point.x + ROW_DIRECTION[i]
+            column = point.y + COL_DIRECTION[i]
 
-            if is_valid(row, column) and graph[row][column] == 1 and not visited[row][column]:
+            if is_valid(row, column) and matrix[row][column] == 1 and not visited[row][column]:
                 visited[row][column] = True
-                adj_cell = queueVertex(Point(row, column), current_node.dist + 1)
-                queue.append(adj_cell)
+                processed_point = QueueVertex(Point(row, column), current_point.dist + 1)
+                queue.append(processed_point)
     return -1
 
 
-lines = file.readline()
-parts = lines.split(",")
-x = int(parts[0])
-y = int(parts[1])
+def read_data_from_file():
+    with open("input.txt", 'r') as file:
+        lines = file.readlines()
 
-lines = file.readline()
-parts = lines.split(",")
-x_dest = int(parts[0])
-y_dest = int(parts[1])
+    x_start, y_start = map(int, lines[0].strip().split(','))
+    x_dest, y_dest = map(int, lines[1].strip().split(','))
+    row, column = map(int, lines[2].strip().split(','))
 
-lines = file.readline()
-parts = lines.split(",")
-row = int(parts[0])
-column = int(parts[1])
+    matrix = []
 
-adjMat = [[1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
-          [0, 1, 1, 1, 1, 1, 0, 1, 0, 1],
-          [0, 0, 1, 0, 1, 1, 1, 0, 0, 1],
-          [1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
-          [0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
-          [1, 0, 1, 1, 1, 0, 0, 1, 1, 0],
-          [0, 0, 0, 0, 1, 0, 0, 1, 0, 1],
-          [0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-          [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
-          [0, 0, 1, 0, 0, 1, 1, 0, 0, 1]]
+    for line in lines[3:]:
+        numbers = [int(num) for num in line if num.isdigit()]
+        matrix.append(numbers)
 
-ROW = row
-COL = column
-start = Point(x, y)
-dest = Point(x_dest, y_dest)
-print(bfs(adjMat, start, dest))
+    return x_start, y_start, x_dest, y_dest, row, column, matrix
+
+def write_result_to_file(result):
+    with open('result.txt', 'w') as file:
+        file.write(str(result))
+x_start, y_start, x_dest, y_dest, row, column, matrix = read_data_from_file()
+TOTAL_ROW_COUNT = row
+TOTAL_COLUMN_COUNT = column
+start = Point(x_start, y_start)
+destination = Point(x_dest, y_dest)
+
+bfs(matrix, start, destination)
